@@ -5,6 +5,7 @@ import TypingPlaceholder from "./components/TypingPlaceholder";
 import ResultCard from "./components/ResultCard";
 import SkeletonCard from "./components/SkeletonCard";
 import InstitutionBadge from "./components/InstitutionBadge";
+import ProgramPage from "./components/ProgramPage";
 import { INSTITUTIONS, SUGGESTED_QUERIES } from "./lib/data";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
   const [searchedAt, setSearchedAt] = useState(null);
   const resultsRef = useRef(null);
   const inputRef = useRef(null);
+  const [selectedResult, setSelectedResult] = useState(null);
 
   async function handleSearch(searchQuery) {
     const q = (searchQuery || query).trim();
@@ -61,6 +63,15 @@ export default function Home() {
     setQuery(sq);
     handleSearch(sq);
   }
+
+  if (selectedResult) {
+  return (
+    <ProgramPage
+      result={selectedResult}
+      onBack={() => setSelectedResult(null)}
+    />
+  );
+}
 
   return (
     <div className="min-h-screen bg-white font-body">
@@ -254,7 +265,7 @@ export default function Home() {
             {results.length > 0 ? (
               <div className="flex flex-col gap-3 sm:gap-4">
                 {results.map((result, i) => (
-                  <ResultCard key={i} result={result} index={i} />
+                  <ResultCard key={i} result={result} index={i} onViewDetail={() => setSelectedResult(result)}/>
                 ))}
               </div>
             ) : (

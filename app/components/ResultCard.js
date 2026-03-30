@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { findInstitution } from "../lib/data";
 
-export default function ResultCard({ result, index }) {
+export default function ResultCard({ result, index, onViewDetail }) {
   const [hovered, setHovered] = useState(false);
   const inst = findInstitution(result.institution);
   const accent = inst?.color || "#0D9488";
@@ -37,17 +37,14 @@ export default function ResultCard({ result, index }) {
         if (cancelled) return;
 
         if (data.valid) {
-          // AI URL works — use it directly
           setVerifyUrl(aiUrl);
           setUrlStatus("direct");
         } else {
-          // AI URL is broken — fall back to Google search
           setVerifyUrl(fallbackUrl);
           setUrlStatus("search");
         }
       } catch {
         if (cancelled) return;
-        // Validation failed — use fallback to be safe
         setVerifyUrl(fallbackUrl);
         setUrlStatus("search");
       }
@@ -131,10 +128,24 @@ export default function ResultCard({ result, index }) {
         </p>
       )}
 
-      {/* ── Smart Verify Link ──────────────────────────────────────── */}
+      {/* ── Buttons row ────────────────────────────────────────────── */}
       <div className="flex items-center gap-2.5 flex-wrap">
+
+        {/* View full details button */}
+        <button
+          onClick={onViewDetail}
+          className="inline-flex items-center gap-1.5 text-[13px] font-body font-semibold px-4 py-2 rounded-lg border transition-all duration-200 hover:shadow-md"
+          style={{
+            color: accent,
+            borderColor: accent + "40",
+            background: accent + "08",
+          }}
+        >
+          View full details →
+        </button>
+
+        {/* Smart Verify Link */}
         {urlStatus === "checking" ? (
-          /* Loading state while validating URL */
           <span className="inline-flex items-center gap-2 text-[13px] font-body font-semibold px-4 py-2 rounded-lg bg-surface-100 text-slate-400">
             <span
               className="w-3 h-3 rounded-full border-2 border-slate-200 animate-spin"
@@ -179,9 +190,6 @@ export default function ResultCard({ result, index }) {
   );
 }
 
-/**
- * Builds a Google site: search URL as a guaranteed-working fallback.
- */
 function buildGoogleSearchUrl(programName, institution, website) {
   let domain = "";
   if (website) {
