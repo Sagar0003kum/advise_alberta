@@ -1,7 +1,20 @@
 "use client";
 import { useState } from "react";
 
-export default function InstitutionBadge({ inst, index }) {
+export interface Institution {
+  name: string;
+  city: string;
+  type: string;
+  color: string;
+  website: string;
+}
+
+interface InstitutionBadgeProps {
+  inst: Institution;
+  index: number;
+}
+
+export default function InstitutionBadge({ inst, index }: InstitutionBadgeProps) {
   const [hovered, setHovered] = useState(false);
 
   return (

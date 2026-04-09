@@ -2,27 +2,46 @@
 import { useState, useEffect } from "react";
 import { findInstitution } from "../lib/data";
 
-export default function ResultCard({ result, index, onViewDetail }) {
+export interface SearchResult {
+  program_name: string;
+  institution: string;
+  credential?: string | null;
+  duration?: string | null;
+  tuition_domestic?: string | null;
+  tuition_international?: string | null;
+  intake?: string | null;
+  semester_structure?: string | null;
+  match_reason?: string | null;
+  source_url?: string | null;
+  verified?: boolean;
+}
+
+interface ResultCardProps {
+  result: SearchResult;
+  index: number;
+  onViewDetail: () => void;
+}
+
+type UrlStatus = "checking" | "direct" | "search";
+
+export default function ResultCard({ result, index, onViewDetail }: ResultCardProps) {
   const [hovered, setHovered] = useState(false);
   const inst = findInstitution(result.institution);
-  const accent = inst?.color || "#0D9488";
+  const accent = inst?.color ?? "#0D9488";
 
-  // ── Smart URL validation state ────────────────────────────────────
-  const [verifyUrl, setVerifyUrl] = useState(null);
-  const [urlStatus, setUrlStatus] = useState("checking"); // "checking" | "direct" | "search"
+  const [verifyUrl, setVerifyUrl] = useState<string | null>(null);
+  const [urlStatus, setUrlStatus] = useState<UrlStatus>("checking");
 
   useEffect(() => {
     const fallbackUrl = buildGoogleSearchUrl(result.program_name, result.institution, inst?.website);
     const aiUrl = result.source_url;
 
-    // If no AI URL provided, go straight to Google search fallback
     if (!aiUrl || !aiUrl.startsWith("http")) {
       setVerifyUrl(fallbackUrl);
       setUrlStatus("search");
       return;
     }
 
-    // Validate the AI-generated URL via our backend
     let cancelled = false;
 
     async function validateUrl() {
@@ -32,12 +51,12 @@ export default function ResultCard({ result, index, onViewDetail }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ url: aiUrl }),
         });
-        const data = await res.json();
+        const data = await res.json() as { valid: boolean };
 
         if (cancelled) return;
 
         if (data.valid) {
-          setVerifyUrl(aiUrl);
+          setVerifyUrl(aiUrl!);
           setUrlStatus("direct");
         } else {
           setVerifyUrl(fallbackUrl);
@@ -128,10 +147,8 @@ export default function ResultCard({ result, index, onViewDetail }) {
         </p>
       )}
 
-      {/* ── Buttons row ────────────────────────────────────────────── */}
+      {/* Buttons row */}
       <div className="flex items-center gap-2.5 flex-wrap">
-
-        {/* View full details button */}
         <button
           onClick={onViewDetail}
           className="inline-flex items-center gap-1.5 text-[13px] font-body font-semibold px-4 py-2 rounded-lg border transition-all duration-200 hover:shadow-md"
@@ -144,7 +161,6 @@ export default function ResultCard({ result, index, onViewDetail }) {
           View full details →
         </button>
 
-        {/* Smart Verify Link */}
         {urlStatus === "checking" ? (
           <span className="inline-flex items-center gap-2 text-[13px] font-body font-semibold px-4 py-2 rounded-lg bg-surface-100 text-slate-400">
             <span
@@ -155,7 +171,7 @@ export default function ResultCard({ result, index, onViewDetail }) {
           </span>
         ) : (
           <a
-            href={verifyUrl}
+            href={verifyUrl ?? "#"}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-[13px] font-body font-semibold no-underline px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-md text-white"
@@ -167,7 +183,6 @@ export default function ResultCard({ result, index, onViewDetail }) {
           </a>
         )}
 
-        {/* Status badge */}
         {urlStatus === "direct" && (
           <span className="inline-flex items-center gap-1 text-[11px] font-body font-medium text-emerald-500">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -190,7 +205,11 @@ export default function ResultCard({ result, index, onViewDetail }) {
   );
 }
 
-function buildGoogleSearchUrl(programName, institution, website) {
+function buildGoogleSearchUrl(
+  programName: string,
+  institution: string,
+  website?: string
+): string {
   let domain = "";
   if (website) {
     try {
@@ -206,7 +225,13 @@ function buildGoogleSearchUrl(programName, institution, website) {
   return `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
 }
 
-function InfoBox({ label, value, accent }) {
+interface InfoBoxProps {
+  label: string;
+  value: string;
+  accent: string;
+}
+
+function InfoBox({ label, value, accent }: InfoBoxProps) {
   return (
     <div className="bg-surface-50 border border-surface-200 rounded-lg px-3.5 py-2.5 sm:px-4 sm:py-3">
       <div className="text-[10px] font-body font-semibold uppercase tracking-widest text-slate-400 mb-0.5">

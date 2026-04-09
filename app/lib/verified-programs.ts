@@ -1,4 +1,24 @@
-export const VERIFIED_PROGRAMS = [
+export interface VerifiedProgram {
+  institution: string;
+  program_name: string;
+  credential: string;
+  duration: string;
+  tuition_domestic: string;
+  tuition_international: string;
+  intake: string;
+  semester_structure: string;
+  fee_source_url: string;
+  last_verified: string;
+}
+
+export interface SearchableProgram extends VerifiedProgram {
+  verified: true;
+  match_score: number;
+  match_reason: string;
+  source_url: string;
+}
+
+export const VERIFIED_PROGRAMS: VerifiedProgram[] = [
   // SAIT
   {institution:"Southern Alberta Institute of Technology",program_name:"Software Development Diploma",credential:"Diploma",duration:"2 years (4 semesters)",tuition_domestic:"$17,440",tuition_international:"$40,660",intake:"September, January",semester_structure:"Fall, Winter, Spring, Summer",fee_source_url:"https://www.sait.ca/programs/software-development",last_verified:"2026-03-28"},
   {institution:"Southern Alberta Institute of Technology",program_name:"Business Administration Diploma",credential:"Diploma",duration:"2 years",tuition_domestic:"$14,600",tuition_international:"$34,200",intake:"September, January",semester_structure:"Fall, Winter",fee_source_url:"https://www.sait.ca/programs/business-administration",last_verified:"2026-03-28"},
@@ -66,17 +86,26 @@ export const VERIFIED_PROGRAMS = [
   {institution:"Northwestern Polytechnic",program_name:"University Transfer (Arts & Science)",credential:"Transfer",duration:"1-2 years",tuition_domestic:"~$5,000/year",tuition_international:"~$16,000/year",intake:"September, January",semester_structure:"Fall, Winter",fee_source_url:"https://nwpolytech.ca/programs/",last_verified:"2026-03-28"},
 ];
 
-export function searchVerifiedPrograms(query) {
+export function searchVerifiedPrograms(query: string): SearchableProgram[] {
   if (!query || typeof query !== "string") return [];
   const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
   return VERIFIED_PROGRAMS
-    .map((program) => {
-      const searchText = [program.institution, program.program_name, program.credential, program.duration, program.intake].filter(Boolean).join(" ").toLowerCase();
+    .map((program): SearchableProgram | null => {
+      const searchText = [program.institution, program.program_name, program.credential, program.duration, program.intake]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
       const matchCount = terms.filter((term) => searchText.includes(term)).length;
       const matchRatio = matchCount / terms.length;
       if (matchRatio < 0.4) return null;
-      return { ...program, verified: true, match_score: matchRatio, match_reason: "Verified data from official fee schedule (last checked " + program.last_verified + ")", source_url: program.fee_source_url };
+      return {
+        ...program,
+        verified: true,
+        match_score: matchRatio,
+        match_reason: `Verified data from official fee schedule (last checked ${program.last_verified})`,
+        source_url: program.fee_source_url,
+      };
     })
-    .filter(Boolean)
+    .filter((p): p is SearchableProgram => p !== null)
     .sort((a, b) => b.match_score - a.match_score);
 }

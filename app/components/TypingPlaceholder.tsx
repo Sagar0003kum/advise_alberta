@@ -1,14 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export default function TypingPlaceholder({ texts }) {
+interface TypingPlaceholderProps {
+  texts: string[];
+}
+
+export default function TypingPlaceholder({ texts }: TypingPlaceholderProps) {
   const [textIndex, setTextIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const current = texts[textIndex];
-    let timeout;
+    let timeout: ReturnType<typeof setTimeout>;
 
     if (!isDeleting && charIndex < current.length) {
       timeout = setTimeout(() => setCharIndex(charIndex + 1), 45);
