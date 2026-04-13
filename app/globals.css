@@ -16,7 +16,15 @@ body {
   font-family: "Source Sans 3", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s, color 0.3s;
 }
+
+html.dark body {
+  background: #0F172A;
+  color: #E2E8F0;
+}
+
+html.dark ::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.3); }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }

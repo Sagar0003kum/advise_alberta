@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { findInstitution } from "../lib/data";
 
-export default function ResultCard({ result, index, onViewDetail }) {
+export default function ResultCard({ result, index, onViewDetail, isCompared, onToggleCompare, compareCount, onCalculator, onDeadline }) {
   const [hovered, setHovered] = useState(false);
   const inst = findInstitution(result.institution);
   const accent = inst?.color || "#0D9488";
@@ -131,6 +131,31 @@ export default function ResultCard({ result, index, onViewDetail }) {
       {/* ── Buttons row ────────────────────────────────────────────── */}
       <div className="flex items-center gap-2.5 flex-wrap">
 
+        {/* Compare checkbox */}
+        <button
+          onClick={onToggleCompare}
+          disabled={!isCompared && compareCount >= 3}
+          className={`inline-flex items-center gap-1.5 text-[13px] font-body font-semibold px-3 py-2 rounded-lg border transition-all duration-200 ${
+            isCompared
+              ? "bg-amber-50 border-amber-300 text-amber-700"
+              : compareCount >= 3
+              ? "bg-surface-50 border-surface-200 text-slate-300 cursor-not-allowed"
+              : "bg-surface-50 border-surface-200 text-slate-500 hover:border-amber-300 hover:text-amber-600"
+          }`}
+        >
+          {isCompared ? (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <rect x="3" y="3" width="18" height="18" rx="3" fill="#F59E0B" stroke="#F59E0B" />
+              <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2.5" />
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <rect x="3" y="3" width="18" height="18" rx="3" />
+            </svg>
+          )}
+          {isCompared ? "Selected" : "Compare"}
+        </button>
+
         {/* View full details button */}
         <button
           onClick={onViewDetail}
@@ -142,6 +167,40 @@ export default function ResultCard({ result, index, onViewDetail }) {
           }}
         >
           View full details →
+        </button>
+
+        {/* Calculator button */}
+        <button
+          onClick={onCalculator}
+          className="inline-flex items-center gap-1.5 text-[13px] font-body font-semibold px-3 py-2 rounded-lg border border-surface-200 text-slate-500 hover:text-primary hover:border-primary/30 bg-white transition-all"
+          title="Tuition Calculator"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <rect x="4" y="2" width="16" height="20" rx="2" />
+            <line x1="8" y1="6" x2="16" y2="6" />
+            <line x1="8" y1="10" x2="10" y2="10" />
+            <line x1="14" y1="10" x2="16" y2="10" />
+            <line x1="8" y1="14" x2="10" y2="14" />
+            <line x1="14" y1="14" x2="16" y2="14" />
+            <line x1="8" y1="18" x2="10" y2="18" />
+            <line x1="14" y1="18" x2="16" y2="18" />
+          </svg>
+          <span className="hidden sm:inline">Cost Calculator</span>
+        </button>
+
+        {/* Deadline button */}
+        <button
+          onClick={onDeadline}
+          className="inline-flex items-center gap-1.5 text-[13px] font-body font-semibold px-3 py-2 rounded-lg border border-surface-200 text-slate-500 hover:text-amber-600 hover:border-amber-300 bg-white transition-all"
+          title="Application Deadlines"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <span className="hidden sm:inline">Deadlines</span>
         </button>
 
         {/* Smart Verify Link */}

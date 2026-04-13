@@ -6,6 +6,14 @@ import ResultCard from "./components/ResultCard";
 import SkeletonCard from "./components/SkeletonCard";
 import InstitutionBadge from "./components/InstitutionBadge";
 import ProgramPage from "./components/ProgramPage";
+import CompareBar from "./components/CompareBar";
+import CompareModal from "./components/CompareModal";
+import FilterSort, { applyFiltersAndSort } from "./components/FilterSort";
+import AIChat from "./components/AIChat";
+import TuitionCalculator from "./components/TuitionCalculator";
+import DeadlineTracker from "./components/DeadlineTracker";
+import ShareResults from "./components/ShareResults";
+import ScholarshipFinder from "./components/ScholarshipFinder";
 import { INSTITUTIONS, SUGGESTED_QUERIES } from "./lib/data";
 
 export default function Home() {
@@ -19,6 +27,29 @@ export default function Home() {
   const resultsRef = useRef(null);
   const inputRef = useRef(null);
   const [selectedResult, setSelectedResult] = useState(null);
+  const [compareList, setCompareList] = useState([]);
+  const [showCompare, setShowCompare] = useState(false);
+  const [filters, setFilters] = useState({ city: null, credential: null, maxTuition: null });
+  const [sortBy, setSortBy] = useState("relevance");
+  const [calculatorResult, setCalculatorResult] = useState(null);
+  const [deadlineResult, setDeadlineResult] = useState(null);
+
+  function toggleCompare(program) {
+    setCompareList((prev) => {
+      const exists = prev.findIndex(
+        (p) => p.program_name === program.program_name && p.institution === program.institution
+      );
+      if (exists >= 0) return prev.filter((_, i) => i !== exists);
+      if (prev.length >= 3) return prev;
+      return [...prev, program];
+    });
+  }
+
+  function isInCompare(program) {
+    return compareList.some(
+      (p) => p.program_name === program.program_name && p.institution === program.institution
+    );
+  }
 
   async function handleSearch(searchQuery) {
     const q = (searchQuery || query).trim();
@@ -74,7 +105,7 @@ export default function Home() {
 }
 
   return (
-    <div className="min-h-screen bg-white font-body">
+    <div className="min-h-screen bg-white dark:bg-slate-900 font-body transition-colors">
       <Navbar />
 
       {/* ── Hero Section ─────────────────────────────────── */}
@@ -250,38 +281,69 @@ export default function Home() {
                     <p className="font-body text-sm sm:text-[15px] text-slate-700 leading-relaxed">
                       {summary}
                     </p>
-                    <p className="font-body text-xs text-slate-400 mt-2">
-                      Found {results.length} matching program{results.length !== 1 ? "s" : ""}
-                      {searchedAt && (
-                        <> · Searched {new Date(searchedAt).toLocaleString()}</>
-                      )}
+                    <p className="font-body text-xs text-slate-400 dark:text-slate-500 mt-2 flex items-center gap-3 flex-wrap">
+                      <span>
+                        Found {results.length} matching program{results.length !== 1 ? "s" : ""}
+                        {searchedAt && (
+                          <> · Searched {new Date(searchedAt).toLocaleString()}</>
+                        )}
+                      </span>
+                      <ShareResults query={query} results={results} />
                     </p>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Cards */}
-            {results.length > 0 ? (
-              <div className="flex flex-col gap-3 sm:gap-4">
-                {results.map((result, i) => (
-                  <ResultCard key={i} result={result} index={i} onViewDetail={() => setSelectedResult(result)}/>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 text-slate-400 font-body">
-                <p className="text-lg mb-2">No programs found</p>
-                <p className="text-sm">Try different keywords or broaden your search.</p>
-              </div>
+            {/* Filters & Sort */}
+            {results.length > 1 && (
+              <FilterSort
+                filters={filters}
+                setFilters={setFilters}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                resultCount={applyFiltersAndSort(results, filters, sortBy).length}
+                totalCount={results.length}
+              />
             )}
+
+            {/* Cards */}
+            {(() => {
+              const filteredResults = applyFiltersAndSort(results, filters, sortBy);
+              return filteredResults.length > 0 ? (
+                <div className="flex flex-col gap-3 sm:gap-4">
+                  {filteredResults.map((result, i) => (
+                    <ResultCard
+                      key={i}
+                      result={result}
+                      index={i}
+                      onViewDetail={() => setSelectedResult(result)}
+                      isCompared={isInCompare(result)}
+                      onToggleCompare={() => toggleCompare(result)}
+                      compareCount={compareList.length}
+                      onCalculator={() => setCalculatorResult(result)}
+                      onDeadline={() => setDeadlineResult(result)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-slate-400 font-body">
+                  <p className="text-lg mb-2">No programs match your filters</p>
+                  <p className="text-sm">Try adjusting your filters or clearing them.</p>
+                </div>
+              );
+            })()}
 
             {/* Disclaimer */}
             {disclaimer && (
-              <div className="mt-5 p-3 sm:p-4 bg-surface-50 border border-surface-200 rounded-xl flex items-start gap-2.5">
+              <div className="mt-5 p-3 sm:p-4 bg-surface-50 dark:bg-slate-800 border border-surface-200 dark:border-slate-700 rounded-xl flex items-start gap-2.5">
                 <span className="text-sm text-slate-400 flex-shrink-0">ⓘ</span>
-                <p className="font-body text-xs text-slate-400 leading-relaxed">{disclaimer}</p>
+                <p className="font-body text-xs text-slate-400 dark:text-slate-500 leading-relaxed">{disclaimer}</p>
               </div>
             )}
+
+            {/* Scholarship Finder */}
+            <ScholarshipFinder results={results} />
 
             {/* Search again */}
             <div className="text-center mt-6 sm:mt-8">
@@ -329,6 +391,41 @@ export default function Home() {
           </p>
         </footer>
       </div>
+
+      {/* ── Compare Bar (floating bottom) ────────────── */}
+      <CompareBar
+        compareList={compareList}
+        onRemove={(i) => setCompareList((prev) => prev.filter((_, idx) => idx !== i))}
+        onCompare={() => setShowCompare(true)}
+        onClear={() => setCompareList([])}
+      />
+
+      {/* ── Compare Modal ────────────────────────────── */}
+      {showCompare && (
+        <CompareModal
+          programs={compareList}
+          onClose={() => setShowCompare(false)}
+        />
+      )}
+
+      {/* ── Tuition Calculator Modal ─────────────────── */}
+      {calculatorResult && (
+        <TuitionCalculator
+          result={calculatorResult}
+          onClose={() => setCalculatorResult(null)}
+        />
+      )}
+
+      {/* ── Deadline Tracker Modal ────────────────────── */}
+      {deadlineResult && (
+        <DeadlineTracker
+          result={deadlineResult}
+          onClose={() => setDeadlineResult(null)}
+        />
+      )}
+
+      {/* ── Floating AI Chat ─────────────────────────── */}
+      <AIChat results={results} originalQuery={query} />
     </div>
   );
 }
