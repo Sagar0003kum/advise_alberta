@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { findInstitution } from "../lib/data";
 
-export default function ResultCard({ result, index, onViewDetail, isCompared, onToggleCompare, compareCount, onCalculator, onDeadline }) {
+export default function ResultCard({ result, index, onViewDetail, isCompared, onToggleCompare, compareCount, onCalculator, onDeadline, onCareer }) {
   const [hovered, setHovered] = useState(false);
   const inst = findInstitution(result.institution);
   const accent = inst?.color || "#0D9488";
@@ -201,6 +201,18 @@ export default function ResultCard({ result, index, onViewDetail, isCompared, on
             <line x1="3" y1="10" x2="21" y2="10" />
           </svg>
           <span className="hidden sm:inline">Deadlines</span>
+        </button>
+
+        {/* Career Outcomes button */}
+        <button
+          onClick={onCareer}
+          className="inline-flex items-center gap-1.5 text-[13px] font-body font-semibold px-3 py-2 rounded-lg border border-surface-200 text-slate-500 hover:text-emerald-600 hover:border-emerald-300 bg-white transition-all"
+          title="Career Outcomes"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="12" y1="20" x2="12" y2="10" /><line x1="18" y1="20" x2="18" y2="4" /><line x1="6" y1="20" x2="6" y2="16" />
+          </svg>
+          <span className="hidden sm:inline">Career</span>
         </button>
 
         {/* Smart Verify Link */}

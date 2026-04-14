@@ -14,6 +14,10 @@ import TuitionCalculator from "./components/TuitionCalculator";
 import DeadlineTracker from "./components/DeadlineTracker";
 import ShareResults from "./components/ShareResults";
 import ScholarshipFinder from "./components/ScholarshipFinder";
+import EmailAlerts from "./components/EmailAlerts";
+import ProgramMatcher from "./components/ProgramMatcher";
+import CareerOutcome from "./components/CareerOutcome";
+import StudentProfile from "./components/StudentProfile";
 import { INSTITUTIONS, SUGGESTED_QUERIES } from "./lib/data";
 
 export default function Home() {
@@ -33,6 +37,9 @@ export default function Home() {
   const [sortBy, setSortBy] = useState("relevance");
   const [calculatorResult, setCalculatorResult] = useState(null);
   const [deadlineResult, setDeadlineResult] = useState(null);
+  const [careerResult, setCareerResult] = useState(null);
+  const [showMatcher, setShowMatcher] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   function toggleCompare(program) {
     setCompareList((prev) => {
@@ -106,7 +113,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 font-body transition-colors">
-      <Navbar />
+      <Navbar onOpenMatcher={() => setShowMatcher(true)} onOpenProfile={() => setShowProfile(true)} />
 
       {/* ── Hero Section ─────────────────────────────────── */}
       <div className="relative overflow-hidden">
@@ -323,6 +330,7 @@ export default function Home() {
                       compareCount={compareList.length}
                       onCalculator={() => setCalculatorResult(result)}
                       onDeadline={() => setDeadlineResult(result)}
+                      onCareer={() => setCareerResult(result)}
                     />
                   ))}
                 </div>
@@ -344,6 +352,9 @@ export default function Home() {
 
             {/* Scholarship Finder */}
             <ScholarshipFinder results={results} />
+
+            {/* Email Alerts */}
+            <EmailAlerts query={query} results={results} />
 
             {/* Search again */}
             <div className="text-center mt-6 sm:mt-8">
@@ -422,6 +433,24 @@ export default function Home() {
           result={deadlineResult}
           onClose={() => setDeadlineResult(null)}
         />
+      )}
+
+      {/* ── Career Outcome Modal ─────────────────────── */}
+      {careerResult && (
+        <CareerOutcome
+          result={careerResult}
+          onClose={() => setCareerResult(null)}
+        />
+      )}
+
+      {/* ── AI Program Matcher ───────────────────────── */}
+      {showMatcher && (
+        <ProgramMatcher onClose={() => setShowMatcher(false)} />
+      )}
+
+      {/* ── Student Profile & Scholarships ───────────── */}
+      {showProfile && (
+        <StudentProfile onClose={() => setShowProfile(false)} />
       )}
 
       {/* ── Floating AI Chat ─────────────────────────── */}

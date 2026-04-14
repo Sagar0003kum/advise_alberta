@@ -63,15 +63,12 @@ export default function AIChat({ results, originalQuery }) {
     }
   }
 
-  const suggestions = [
-    "Which one is cheapest?",
-    "Which is shortest?",
-    "Any with co-op?",
-    "Compare top 2",
-  ];
+  // Changed: now always shows the floating button
+  const hasResults = results && results.length > 0;
 
-  // Don't render if no results
-  if (!results || results.length === 0) return null;
+  const suggestions = hasResults
+    ? ["Which one is cheapest?", "Which is shortest?", "Any with co-op?", "Compare top 2"]
+    : ["What programs are in Calgary?", "Cheapest nursing diploma?", "Best trade programs?", "How to apply in Alberta?"];
 
   return (
     <>
