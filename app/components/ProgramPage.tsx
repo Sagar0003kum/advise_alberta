@@ -5,8 +5,7 @@ import Navbar from "../components/Navbar";
 import { VERIFIED_PROGRAMS } from "../lib/verified-programs";
 import { findInstitution } from "../lib/data";
 
-// ── Program → Unsplash hero photo ────────────────────────────────────────────
-const HERO_IMAGES = {
+const HERO_IMAGES: Record<string, string> = {
   nursing:     "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=1600&q=80",
   health:      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1600&q=80",
   medical:     "https://images.unsplash.com/photo-1551190822-a9333d879b1f?w=1600&q=80",
@@ -28,7 +27,7 @@ const HERO_IMAGES = {
   default:     "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600&q=80",
 };
 
-const CARD_IMAGES = {
+const CARD_IMAGES: Record<string, string> = {
   nursing:     "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&q=75",
   health:      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=75",
   software:    "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=75",
@@ -55,7 +54,6 @@ function getProgramImage(programName: string | undefined, set: string = "hero"):
   return images.default;
 }
 
-// ── Similar programs from verified DB ────────────────────────────────────────
 function getSimilarPrograms(currentName: string | undefined, currentInstitution: string | undefined, limit: number = 4) {
   const stopWords = new Set(["of","in","and","the","a","for","to","bachelor","master","diploma","certificate","science","arts"]);
   const keywords = (currentName || "").toLowerCase().split(/\s+/).filter(w => w.length > 3 && !stopWords.has(w));
@@ -64,7 +62,7 @@ function getSimilarPrograms(currentName: string | undefined, currentInstitution:
     .filter(p => p.institution !== currentInstitution)
     .map(p => ({ ...p, _score: keywords.filter(kw => p.program_name.toLowerCase().includes(kw)).length }))
     .filter(p => p._score > 0)
-    .sort((a, b) => b._score - a._score)
+    .sort((a: any, b: any) => b._score - a._score)
     .slice(0, limit);
 }
 
@@ -78,8 +76,7 @@ async function fetchProgramDetail(programName: string, institution: string) {
   return res.json();
 }
 
-// ── Small components ──────────────────────────────────────────────────────────
-function SectionHeading({ icon, title, color = "#1d56c9" }) {
+function SectionHeading({ icon, title, color = "#1d56c9" }: { icon: string; title: string; color?: string }) {
   return (
     <div className="flex items-center gap-3 mb-6">
       <span style={{ fontSize: 26 }}>{icon}</span>
@@ -88,7 +85,7 @@ function SectionHeading({ icon, title, color = "#1d56c9" }) {
   );
 }
 
-function CheckRow({ text }) {
+function CheckRow({ text }: { text: string }) {
   return (
     <li className="flex items-start gap-3 text-sm text-slate-700">
       <svg className="mt-0.5 shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -100,7 +97,7 @@ function CheckRow({ text }) {
   );
 }
 
-function FeeRow({ label, value, bold, accent }) {
+function FeeRow({ label, value, bold, accent }: { label: string; value: string; bold?: boolean; accent?: string }) {
   return (
     <div className={`flex justify-between items-center pb-2 ${bold ? "pt-2" : "border-b border-slate-100"}`}>
       <span className="text-sm" style={bold ? { color: accent, fontWeight: 700 } : { color: "#4b5563" }}>{label}</span>
@@ -109,7 +106,7 @@ function FeeRow({ label, value, bold, accent }) {
   );
 }
 
-function Tag({ text, color = "#0D9488" }) {
+function Tag({ text, color = "#0D9488" }: { text: string; color?: string }) {
   return (
     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
       style={{ background: color + "15", color, border: `1px solid ${color}25` }}>
@@ -134,7 +131,7 @@ function DetailSkeleton() {
   );
 }
 
-function SimilarCard({ program, onSelect }) {
+function SimilarCard({ program, onSelect }: { program: any; onSelect?: (p: any) => void }) {
   const [hovered, setHovered] = useState(false);
   const inst = findInstitution(program.institution);
   const city = inst?.city || "";
@@ -190,20 +187,19 @@ function SimilarCard({ program, onSelect }) {
   );
 }
 
-// ── Main export ───────────────────────────────────────────────────────────────
 interface ProgramPageProps { result: ProgramResult; onBack: () => void; }
 export default function ProgramPage({ result, onBack }: ProgramPageProps) {
-  const [detail, setDetail]   = useState(null);
+  const [detail, setDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
 
   const inst   = findInstitution(result?.institution);
   const accent = inst?.color || "#1d56c9";
 
-  const overviewRef    = useRef(null);
-  const eligibilityRef = useRef(null);
-  const feesRef        = useRef(null);
-  const similarRef     = useRef(null);
+  const overviewRef    = useRef<HTMLElement>(null);
+  const eligibilityRef = useRef<HTMLElement>(null);
+  const feesRef        = useRef<HTMLElement>(null);
+  const similarRef     = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!result) return;
@@ -213,7 +209,6 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
       .catch(() => { setDetail(null); setLoading(false); });
   }, [result?.program_name, result?.institution]);
 
-  // Scroll-spy
   useEffect(() => {
     if (loading) return;
     const sections = [
@@ -230,24 +225,22 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
     return () => observer.disconnect();
   }, [loading]);
 
-  function scrollTo(ref, id) {
+  function scrollTo(ref: React.RefObject<HTMLElement | null>, id: string) {
     setActiveTab(id);
     ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   if (!result) return null;
 
-  // ── Merge verified + AI + result data ────────────────────────────────────
-  const d = detail || {};
+  const d: any = detail || {};
   const r = result;
 
-  // Look up in verified DB for authoritative fee/intake data
   const verified = VERIFIED_PROGRAMS.find(p =>
     p.institution?.toLowerCase() === (d.institution || r.institution || "").toLowerCase() &&
     p.program_name?.toLowerCase() === (d.program_name || r.program_name || "").toLowerCase()
   );
 
-  const program = {
+  const program: any = {
     program_name:           d.program_name            || r.program_name,
     institution:            d.institution             || r.institution,
     credential:             d.credential              || r.credential,
@@ -257,7 +250,6 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
     intake:                 verified?.intake          || d.intake                || r.intake,
     semester_structure:     verified?.semester_structure || d.semester_structure || r.semester_structure,
     source_url:             verified?.fee_source_url  || d.source_url            || r.source_url,
-    // AI-enriched fields — shown if available, fallback text otherwise
     description:            d.description             || null,
     admission_requirements: d.admission_requirements  || null,
     career_outcomes:        d.career_outcomes         || [],
@@ -289,9 +281,8 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
 
   return (
     <div className="min-h-screen font-body" style={{ background: "#f6f6f8" }}>
-      <Navbar />
+      <Navbar onOpenMatcher={() => {}} onOpenProfile={() => {}} />
 
-      {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative h-[380px] sm:h-[420px] overflow-hidden">
         <img src={heroImage} alt={program.program_name}
           className="absolute inset-0 w-full h-full object-cover" />
@@ -307,7 +298,6 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
             Back to results
           </button>
 
-          {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-white/70 text-sm mb-4 flex-wrap">
             <button onClick={onBack} className="hover:text-white transition-colors">Home</button>
             <span>›</span>
@@ -349,7 +339,6 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
         </div>
       </section>
 
-      {/* ── TAB BAR ──────────────────────────────────────────────────────── */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto">
           <div className="flex gap-6 sm:gap-8">
@@ -367,23 +356,17 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
         </div>
       </div>
 
-      {/* ── 2-COLUMN LAYOUT ──────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-
-          {/* LEFT: content ─────────────────────────────────────────────── */}
           <div className="lg:col-span-2 space-y-10">
             {loading ? <DetailSkeleton /> : (
               <>
-                {/* OVERVIEW */}
                 <section id="overview" ref={overviewRef} className="scroll-mt-20 bg-white rounded-2xl p-8 border border-slate-200">
                   <SectionHeading icon="📋" title="Program Overview" color="#1d56c9" />
-
                   <p className="text-slate-600 leading-relaxed mb-6">
                     {program.description ||
                       `${program.program_name} at ${program.institution} is a ${program.credential || "program"} designed to prepare graduates with the skills and knowledge for a successful career in the field.${program.duration ? ` This ${program.duration} program` : ""} combines classroom learning with practical experience, and is recognized across Alberta and Canada.`}
                   </p>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div className="p-5 rounded-xl border" style={{ background: "#1d56c908", borderColor: "#1d56c920" }}>
                       <h4 className="font-bold text-sm mb-1.5" style={{ color: "#1d56c9" }}>
@@ -408,21 +391,19 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
                       </p>
                     </div>
                   </div>
-
                   {program.courses.length > 0 && (
                     <div className="mb-6">
                       <h3 className="font-bold text-sm text-slate-500 uppercase tracking-wide mb-3">Sample Courses</h3>
                       <div className="flex flex-wrap gap-2">
-                        {program.courses.map((c, i) => <Tag key={i} text={c} color={accent} />)}
+                        {program.courses.map((c: string, i: number) => <Tag key={i} text={c} color={accent} />)}
                       </div>
                     </div>
                   )}
-
                   {program.career_outcomes.length > 0 && (
                     <div>
                       <h3 className="font-bold text-sm text-slate-500 uppercase tracking-wide mb-3">Career Outcomes</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {program.career_outcomes.map((c, i) => (
+                        {program.career_outcomes.map((c: string, i: number) => (
                           <div key={i} className="flex items-center gap-2.5 bg-slate-50 border border-slate-100 rounded-lg px-4 py-2.5">
                             <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: accent }}/>
                             <span className="text-sm text-slate-700">{c}</span>
@@ -433,17 +414,15 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
                   )}
                 </section>
 
-                {/* ELIGIBILITY */}
                 <section id="eligibility" ref={eligibilityRef} className="scroll-mt-20 rounded-2xl p-8 border"
                   style={{ background: "linear-gradient(135deg,#d9770608,transparent)", borderColor: "#d9770620" }}>
                   <SectionHeading icon="✅" title="Eligibility & Program Details" color="#d97706" />
-
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                       <h3 className="font-bold text-base mb-4" style={{ color: "#d97706" }}>Admission Requirements</h3>
                       {program.admission_requirements ? (
                         <ul className="space-y-2.5">
-                          {program.admission_requirements.split(/\n|•|-/).map(s => s.trim()).filter(Boolean).map((req, i) => (
+                          {program.admission_requirements.split(/\n|•|-/).map((s: string) => s.trim()).filter(Boolean).map((req: string, i: number) => (
                             <CheckRow key={i} text={req} />
                           ))}
                         </ul>
@@ -456,7 +435,6 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
                         </ul>
                       )}
                     </div>
-
                     <div className="space-y-4">
                       <div className="bg-white p-4 rounded-xl shadow-sm">
                         <p className="text-xs uppercase font-bold text-slate-400 mb-2">Program Details</p>
@@ -477,13 +455,11 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
                   </div>
                 </section>
 
-                {/* FEE BREAKDOWN */}
                 <section id="fees" ref={feesRef} className="scroll-mt-20 bg-white rounded-2xl p-8 border border-slate-200">
                   <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
                     <SectionHeading icon="💳" title="Fee Breakdown" color="#e11d48" />
                     <span className="text-sm text-slate-400 italic">Estimated per year</span>
                   </div>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "#1d56c920" }}>
                       <div className="p-4 text-white font-bold flex justify-between items-center" style={{ background: "#1d56c9" }}>
@@ -497,7 +473,6 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
                         <FeeRow label="Annual Total" value={program.tuition_domestic || "See institution"} bold accent="#1d56c9" />
                       </div>
                     </div>
-
                     <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "#0d948820" }}>
                       <div className="p-4 text-white font-bold flex justify-between items-center" style={{ background: "#0d9488" }}>
                         <span>International Students</span>
@@ -511,7 +486,6 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
                       </div>
                     </div>
                   </div>
-
                   {program.last_verified && (
                     <p className="text-xs text-slate-400 mt-5 text-center">
                       ✓ Fee data verified · Last checked {new Date(program.last_verified).toLocaleDateString()}
@@ -519,13 +493,12 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
                   )}
                 </section>
 
-                {/* SIMILAR PROGRAMS */}
                 <section id="similar" ref={similarRef} className="scroll-mt-20">
                   <SectionHeading icon="🔍" title="Similar Programs in Alberta" color="#475569" />
                   {similarList.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                      {similarList.map((p, i) => (
-                        <SimilarCard key={i} program={p} onSelect={prog => window.__similarProgramClick?.(prog)} />
+                      {similarList.map((p: any, i: number) => (
+                        <SimilarCard key={i} program={p} onSelect={(prog: any) => (window as any).__similarProgramClick?.(prog)} />
                       ))}
                     </div>
                   ) : (
@@ -536,11 +509,8 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
             )}
           </div>
 
-          {/* RIGHT: sticky sidebar ──────────────────────────────────────── */}
           <aside>
             <div className="sticky top-20 space-y-5">
-
-              {/* Main CTA card */}
               <div className="bg-white rounded-2xl border border-slate-200 p-7 shadow-xl shadow-slate-200/60">
                 {program.application_deadline && (
                   <div className="mb-6">
@@ -549,7 +519,6 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
                     <p className="text-xs text-slate-400 mt-1">Late applications may not be considered.</p>
                   </div>
                 )}
-
                 <div className="space-y-3">
                   {program.application_url && (
                     <a href={program.application_url} target="_blank" rel="noopener noreferrer"
@@ -566,7 +535,6 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
                     </a>
                   )}
                 </div>
-
                 {(program.contact_email || program.contact_phone) && (
                   <>
                     <hr className="my-6 border-slate-100" />
@@ -597,15 +565,13 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
                     </div>
                   </>
                 )}
-
                 <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
                   <p className="text-xs text-slate-500 leading-relaxed italic">
-                    "Always verify program details and fees directly with {program.institution} before applying."
+                    &quot;Always verify program details and fees directly with {program.institution} before applying.&quot;
                   </p>
                 </div>
               </div>
 
-              {/* Source / verification badge */}
               <div className="bg-white rounded-xl border border-slate-200 p-4">
                 <div className="flex flex-wrap gap-2 mb-2">
                   {program.from_verified && (
@@ -627,14 +593,11 @@ export default function ProgramPage({ result, onBack }: ProgramPageProps) {
                   Always verify directly with the institution before applying.
                 </p>
               </div>
-
             </div>
           </aside>
-
         </div>
       </div>
 
-      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
       <footer className="bg-white border-t border-slate-200 py-14 mt-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
           <div>

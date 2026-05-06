@@ -113,7 +113,7 @@ export default function CompareModal({ programs, onClose }: CompareModalProps) {
                 } else {
                   content = (
                     <span className={`text-sm font-body ${formatted === "✓ Verified" ? "text-emerald-500 font-semibold" : "text-slate-500"}`}>
-                      {formatted}
+                    {String(formatted)}
                     </span>
                   );
                 }

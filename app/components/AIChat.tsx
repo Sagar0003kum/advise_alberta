@@ -184,13 +184,13 @@ export default function AIChat({ results, originalQuery }: AIChatProps) {
                 type="text"
                 value={input}
                 onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setInput(e.target.value)}
-                onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && sendMessage()}
+                onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && sendMessage("")}
                 placeholder="Ask a question..."
                 className="flex-1 text-sm font-body text-slate-700 bg-white border border-surface-200 rounded-lg px-3 py-1.5 outline-none focus:border-primary/30"
                 disabled={loading}
               />
               <button
-                onClick={() => sendMessage()}
+                onClick={() => sendMessage("")}
                 disabled={loading || !input.trim()}
                 className="w-8 h-8 rounded-lg flex items-center justify-center transition-all disabled:opacity-30"
                 style={{ background: "linear-gradient(135deg, #0D9488, #0891B2)" }}

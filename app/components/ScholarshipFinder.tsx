@@ -79,7 +79,7 @@ export default function ScholarshipFinder({ results }: ScholarshipFinderProps) {
   if (!results || results.length === 0) return null;
 
   // Get unique institutions from results
-  const institutions = [...new Set(results.map((r) => r.institution))];
+  const institutions = Array.from(new Set(results.map((r) => r.institution)));
   const matchedScholarships = institutions
     .map((inst) => ({ institution: inst, data: SCHOLARSHIP_DATA[inst] }))
     .filter((s) => s.data);

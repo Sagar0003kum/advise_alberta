@@ -13,7 +13,7 @@ const DEADLINE_DATA = {
 function getDaysUntil(dateStr) {
   const target = new Date(dateStr);
   const now = new Date();
-  const diff = target - now;
+  const diff = target.getTime() - now.getTime();
   return Math.ceil(diff / (1000 * 60 * 60 * 24));
 }
 

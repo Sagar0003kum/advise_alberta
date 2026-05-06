@@ -3,7 +3,7 @@ import { ProgramResult, Filters } from "../types";
 import { useState } from "react";
 import { INSTITUTIONS } from "../lib/data";
 
-const CITIES = [...new Set(INSTITUTIONS.map((i) => i.city))].sort();
+const CITIES = Array.from(new Set(INSTITUTIONS.map((i) => i.city))).sort();
 const CREDENTIALS = ["Degree", "Diploma", "Certificate", "Graduate Degree", "Doctoral", "Transfer"];
 const SORT_OPTIONS = [
   { value: "relevance", label: "Relevance" },

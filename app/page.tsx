@@ -19,46 +19,47 @@ import ProgramMatcher from "./components/ProgramMatcher";
 import CareerOutcome from "./components/CareerOutcome";
 import StudentProfile from "./components/StudentProfile";
 import { INSTITUTIONS, SUGGESTED_QUERIES } from "./lib/data";
+import { ProgramResult, Filters } from "./types";
 
 export default function Home() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<ProgramResult[] | null>(null);
   const [summary, setSummary] = useState("");
   const [disclaimer, setDisclaimer] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [searchedAt, setSearchedAt] = useState(null);
-  const resultsRef = useRef(null);
-  const inputRef = useRef(null);
-  const [selectedResult, setSelectedResult] = useState(null);
-  const [compareList, setCompareList] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+  const [searchedAt, setSearchedAt] = useState<string | null>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedResult, setSelectedResult] = useState<ProgramResult | null>(null);
+  const [compareList, setCompareList] = useState<ProgramResult[]>([]);
   const [showCompare, setShowCompare] = useState(false);
-  const [filters, setFilters] = useState({ city: null, credential: null, maxTuition: null });
+  const [filters, setFilters] = useState<Filters>({ city: null, credential: null, maxTuition: null });
   const [sortBy, setSortBy] = useState("relevance");
-  const [calculatorResult, setCalculatorResult] = useState(null);
-  const [deadlineResult, setDeadlineResult] = useState(null);
-  const [careerResult, setCareerResult] = useState(null);
+  const [calculatorResult, setCalculatorResult] = useState<ProgramResult | null>(null);
+  const [deadlineResult, setDeadlineResult] = useState<ProgramResult | null>(null);
+  const [careerResult, setCareerResult] = useState<ProgramResult | null>(null);
   const [showMatcher, setShowMatcher] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
 
-  function toggleCompare(program) {
+  function toggleCompare(program: ProgramResult) {
     setCompareList((prev) => {
       const exists = prev.findIndex(
         (p) => p.program_name === program.program_name && p.institution === program.institution
       );
-      if (exists >= 0) return prev.filter((_, i) => i !== exists);
+      if (exists >= 0) return prev.filter((_: any, i: number) => i !== exists);
       if (prev.length >= 3) return prev;
       return [...prev, program];
     });
   }
 
-  function isInCompare(program) {
+  function isInCompare(program: ProgramResult) {
     return compareList.some(
       (p) => p.program_name === program.program_name && p.institution === program.institution
     );
   }
 
-  async function handleSearch(searchQuery) {
+  async function handleSearch(searchQuery?: string) {
     const q = (searchQuery || query).trim();
     if (!q) return;
 
@@ -86,30 +87,30 @@ export default function Home() {
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 200);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter") handleSearch();
   }
 
-  function handleSuggestionClick(sq) {
+  function handleSuggestionClick(sq: string) {
     setQuery(sq);
     handleSearch(sq);
   }
 
   if (selectedResult) {
-  return (
-    <ProgramPage
-      result={selectedResult}
-      onBack={() => setSelectedResult(null)}
-    />
-  );
-}
+    return (
+      <ProgramPage
+        result={selectedResult}
+        onBack={() => setSelectedResult(null)}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 font-body transition-colors">
@@ -117,14 +118,12 @@ export default function Home() {
 
       {/* ── Hero Section ─────────────────────────────────── */}
       <div className="relative overflow-hidden">
-        {/* Bold teal-to-cyan gradient */}
         <div
           className="absolute inset-x-0 top-0 h-[380px] sm:h-[420px]"
           style={{
             background: "linear-gradient(135deg, #0D9488 0%, #0891B2 45%, #06B6D4 100%)",
           }}
         />
-        {/* Curved bottom edge */}
         <div
           className="absolute inset-x-0 bottom-0 h-[380px] sm:h-[420px]"
           style={{
@@ -132,7 +131,6 @@ export default function Home() {
             borderRadius: "0 0 50% 50% / 0 0 60px 60px",
           }}
         />
-        {/* Subtle pattern overlay */}
         <div
           className="absolute inset-x-0 top-0 h-[380px] sm:h-[420px] opacity-[0.06]"
           style={{
@@ -142,7 +140,6 @@ export default function Home() {
           }}
         />
 
-        {/* Content */}
         <div className="relative z-10 max-w-[900px] mx-auto px-4 sm:px-6">
           <div className="pt-10 sm:pt-14 pb-12 sm:pb-16 text-center">
             <div className="animate-fade-slide-up">
@@ -160,7 +157,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* ── Search Bar ──────────────────────────────── */}
             <div className="animate-fade-slide-up delay-200">
               <div className={`relative max-w-[680px] mx-auto ${loading ? "animate-search-pulse" : ""}`}>
                 <div
@@ -169,7 +165,6 @@ export default function Home() {
                     boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
                   }}
                 >
-                  {/* Search icon */}
                   <svg
                     width="18" height="18" viewBox="0 0 24 24" fill="none"
                     stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
@@ -184,7 +179,7 @@ export default function Home() {
                       ref={inputRef}
                       type="text"
                       value={query}
-                      onChange={(e) => setQuery(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
                       onKeyDown={handleKeyDown}
                       className="w-full bg-transparent border-none outline-none text-slate-800 font-body text-sm sm:text-base py-2.5 sm:py-3"
                       placeholder=""
@@ -212,7 +207,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* ── Suggested Searches ────────────────────── */}
               <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mt-4 sm:mt-5 max-w-[680px] mx-auto px-2">
                 {SUGGESTED_QUERIES.slice(0, 4).map((sq, i) => (
                   <button
@@ -226,13 +220,13 @@ export default function Home() {
                       color: "rgba(255,255,255,0.9)",
                       backdropFilter: "blur(4px)",
                     }}
-                    onMouseEnter={(e) => {
-                      e.target.style.background = "rgba(255,255,255,0.35)";
-                      e.target.style.borderColor = "rgba(255,255,255,0.5)";
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      (e.target as HTMLButtonElement).style.background = "rgba(255,255,255,0.35)";
+                      (e.target as HTMLButtonElement).style.borderColor = "rgba(255,255,255,0.5)";
                     }}
-                    onMouseLeave={(e) => {
-                      e.target.style.background = "rgba(255,255,255,0.2)";
-                      e.target.style.borderColor = "rgba(255,255,255,0.35)";
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      (e.target as HTMLButtonElement).style.background = "rgba(255,255,255,0.2)";
+                      (e.target as HTMLButtonElement).style.borderColor = "rgba(255,255,255,0.35)";
                     }}
                   >
                     {sq}
@@ -244,17 +238,14 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── Main Content ─────────────────────────────────── */}
       <div className="max-w-[900px] mx-auto px-4 sm:px-6">
 
-        {/* ── Error ────────────────────────────────────── */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-xl px-4 sm:px-6 py-4 mb-6 mt-6 font-body text-sm text-red-600 text-center animate-fade-slide-up">
             {error}
           </div>
         )}
 
-        {/* ── Loading ──────────────────────────────────── */}
         {loading && (
           <div ref={resultsRef} className="mb-10 mt-6">
             <div className="text-center mb-6 animate-fade-slide-up">
@@ -276,10 +267,8 @@ export default function Home() {
           </div>
         )}
 
-        {/* ── Results ──────────────────────────────────── */}
         {results && !loading && (
           <div ref={resultsRef} className="mb-12 mt-6">
-            {/* Summary */}
             {summary && (
               <div className="bg-primary-50 border border-primary-100 rounded-xl px-4 sm:px-6 py-4 sm:py-5 mb-5 animate-fade-slide-up">
                 <div className="flex items-start gap-2.5 sm:gap-3">
@@ -302,7 +291,6 @@ export default function Home() {
               </div>
             )}
 
-            {/* Filters & Sort */}
             {results.length > 1 && (
               <FilterSort
                 filters={filters}
@@ -314,12 +302,11 @@ export default function Home() {
               />
             )}
 
-            {/* Cards */}
             {(() => {
               const filteredResults = applyFiltersAndSort(results, filters, sortBy);
               return filteredResults.length > 0 ? (
                 <div className="flex flex-col gap-3 sm:gap-4">
-                  {filteredResults.map((result, i) => (
+                  {filteredResults.map((result: ProgramResult, i: number) => (
                     <ResultCard
                       key={i}
                       result={result}
@@ -342,7 +329,6 @@ export default function Home() {
               );
             })()}
 
-            {/* Disclaimer */}
             {disclaimer && (
               <div className="mt-5 p-3 sm:p-4 bg-surface-50 dark:bg-slate-800 border border-surface-200 dark:border-slate-700 rounded-xl flex items-start gap-2.5">
                 <span className="text-sm text-slate-400 flex-shrink-0">ⓘ</span>
@@ -350,13 +336,9 @@ export default function Home() {
               </div>
             )}
 
-            {/* Scholarship Finder */}
             <ScholarshipFinder results={results} />
-
-            {/* Email Alerts */}
             <EmailAlerts query={query} results={results} />
 
-            {/* Search again */}
             <div className="text-center mt-6 sm:mt-8">
               <button
                 onClick={() => {
@@ -375,7 +357,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* ── Institutions Grid ────────────────────────── */}
         {!loading && !results && (
           <div className="py-8 sm:py-12 animate-fade-slide-up delay-400">
             <div className="flex items-center gap-3 mb-5 sm:mb-6">
@@ -393,7 +374,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* ── Footer ───────────────────────────────────── */}
         <footer className="border-t border-surface-200 py-6 pb-8 text-center">
           <p className="font-body text-[11px] sm:text-xs text-slate-400 leading-relaxed px-2">
             AdviseAlberta is an independent tool and is not affiliated with ApplyAlberta or any Alberta institution.
@@ -403,57 +383,37 @@ export default function Home() {
         </footer>
       </div>
 
-      {/* ── Compare Bar (floating bottom) ────────────── */}
       <CompareBar
         compareList={compareList}
-        onRemove={(i) => setCompareList((prev) => prev.filter((_, idx) => idx !== i))}
+        onRemove={(i: number) => setCompareList((prev) => prev.filter((_: any, idx: number) => idx !== i))}
         onCompare={() => setShowCompare(true)}
         onClear={() => setCompareList([])}
       />
 
-      {/* ── Compare Modal ────────────────────────────── */}
       {showCompare && (
-        <CompareModal
-          programs={compareList}
-          onClose={() => setShowCompare(false)}
-        />
+        <CompareModal programs={compareList} onClose={() => setShowCompare(false)} />
       )}
 
-      {/* ── Tuition Calculator Modal ─────────────────── */}
       {calculatorResult && (
-        <TuitionCalculator
-          result={calculatorResult}
-          onClose={() => setCalculatorResult(null)}
-        />
+        <TuitionCalculator result={calculatorResult} onClose={() => setCalculatorResult(null)} />
       )}
 
-      {/* ── Deadline Tracker Modal ────────────────────── */}
       {deadlineResult && (
-        <DeadlineTracker
-          result={deadlineResult}
-          onClose={() => setDeadlineResult(null)}
-        />
+        <DeadlineTracker result={deadlineResult} onClose={() => setDeadlineResult(null)} />
       )}
 
-      {/* ── Career Outcome Modal ─────────────────────── */}
       {careerResult && (
-        <CareerOutcome
-          result={careerResult}
-          onClose={() => setCareerResult(null)}
-        />
+        <CareerOutcome result={careerResult} onClose={() => setCareerResult(null)} />
       )}
 
-      {/* ── AI Program Matcher ───────────────────────── */}
       {showMatcher && (
         <ProgramMatcher onClose={() => setShowMatcher(false)} />
       )}
 
-      {/* ── Student Profile & Scholarships ───────────── */}
       {showProfile && (
         <StudentProfile onClose={() => setShowProfile(false)} />
       )}
 
-      {/* ── Floating AI Chat ─────────────────────────── */}
       <AIChat results={results} originalQuery={query} />
     </div>
   );

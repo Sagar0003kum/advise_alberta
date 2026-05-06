@@ -38,8 +38,8 @@ function TableRow({ cells, header }: { cells: any[]; header?: boolean }) {
 export default function AdminDashboard() {
   const { user, loading: authLoading, logout } = useAuth();
   const [stats, setStats] = useState({ users: 0, alerts: 0, searches: 0 });
-  const [users, setUsers] = useState([]);
-  const [alerts, setAlerts] = useState([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<any[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -53,18 +53,18 @@ export default function AdminDashboard() {
     try {
       // Fetch users
       const usersSnap = await getDocs(collection(db, "users"));
-      const usersData = usersSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      const usersData = usersSnap.docs.map((d: any) => ({ id: d.id, ...d.data() }));
       setUsers(usersData);
 
       // Fetch alerts
       const alertsSnap = await getDocs(collection(db, "alerts"));
-      const alertsData = alertsSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      const alertsData = alertsSnap.docs.map((d: any) => ({ id: d.id, ...d.data() }));
       setAlerts(alertsData);
 
       // Compute stats
       setStats({
         users: usersData.length,
-        alerts: alertsData.filter((a) => a.active).length,
+        alerts: alertsData.filter((a: any) => a.active).length,
         searches: alertsData.length, // approximate
       });
     } catch (error) {
