@@ -1,7 +1,9 @@
+import { ProgramResult } from "../types";
 "use client";
 import { findInstitution } from "../lib/data";
 
-export default function CompareModal({ programs, onClose }) {
+interface CompareModalProps { programs: ProgramResult[]; onClose: () => void; }
+export default function CompareModal({ programs, onClose }: CompareModalProps) {
   if (!programs || programs.length < 2) return null;
 
   const rows = [
@@ -19,7 +21,7 @@ export default function CompareModal({ programs, onClose }) {
   ];
 
   // Try to find cheapest domestic tuition for highlighting
-  function extractNumber(str) {
+  function extractNumber(str: string | undefined): number {
     if (!str) return Infinity;
     const match = str.replace(/,/g, "").match(/\$?([\d.]+)/);
     return match ? parseFloat(match[1]) : Infinity;

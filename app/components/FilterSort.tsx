@@ -1,3 +1,4 @@
+import { ProgramResult, Filters } from "../types";
 "use client";
 import { useState } from "react";
 import { INSTITUTIONS } from "../lib/data";
@@ -11,13 +12,13 @@ const SORT_OPTIONS = [
   { value: "alpha", label: "A → Z" },
 ];
 
-function extractNumber(str) {
+function extractNumber(str: string | undefined): number {
   if (!str) return Infinity;
   const match = str.replace(/,/g, "").match(/\$([\d.]+)/);
   return match ? parseFloat(match[1]) : Infinity;
 }
 
-function extractDurationMonths(str) {
+function extractDurationMonths(str: string | undefined): number {
   if (!str) return Infinity;
   const lower = str.toLowerCase();
   const yearMatch = lower.match(/([\d.]+)\s*year/);
@@ -29,7 +30,7 @@ function extractDurationMonths(str) {
   return Infinity;
 }
 
-export function applyFiltersAndSort(results, filters, sortBy) {
+export function applyFiltersAndSort(results: ProgramResult[], filters: Filters, sortBy: string): ProgramResult[] {
   let filtered = [...results];
 
   if (filters.city) {
@@ -63,7 +64,8 @@ export function applyFiltersAndSort(results, filters, sortBy) {
   return filtered;
 }
 
-export default function FilterSort({ filters, setFilters, sortBy, setSortBy, resultCount, totalCount }) {
+interface FilterSortProps { filters: Filters; setFilters: (f: Filters) => void; sortBy: string; setSortBy: (s: string) => void; resultCount: number; totalCount: number; }
+export default function FilterSort({ filters, setFilters, sortBy, setSortBy, resultCount, totalCount }: FilterSortProps) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -89,7 +91,7 @@ export default function FilterSort({ filters, setFilters, sortBy, setSortBy, res
           <span className="text-xs font-body text-slate-400">Sort:</span>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setSortBy(e.target.value)}
             className="text-sm font-body font-medium text-slate-600 bg-white border border-surface-200 rounded-lg px-3 py-1.5 outline-none focus:border-primary/30 cursor-pointer"
           >
             {SORT_OPTIONS.map((opt) => (
@@ -109,7 +111,7 @@ export default function FilterSort({ filters, setFilters, sortBy, setSortBy, res
             </label>
             <select
               value={filters.city || ""}
-              onChange={(e) => setFilters({ ...filters, city: e.target.value || null })}
+              onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setFilters({ ...filters, city: e.target.value || null })}
               className="w-full text-sm font-body text-slate-600 bg-surface-50 border border-surface-200 rounded-lg px-3 py-2 outline-none focus:border-primary/30"
             >
               <option value="">All cities</option>
@@ -126,7 +128,7 @@ export default function FilterSort({ filters, setFilters, sortBy, setSortBy, res
             </label>
             <select
               value={filters.credential || ""}
-              onChange={(e) => setFilters({ ...filters, credential: e.target.value || null })}
+              onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setFilters({ ...filters, credential: e.target.value || null })}
               className="w-full text-sm font-body text-slate-600 bg-surface-50 border border-surface-200 rounded-lg px-3 py-2 outline-none focus:border-primary/30"
             >
               <option value="">All types</option>
@@ -143,7 +145,7 @@ export default function FilterSort({ filters, setFilters, sortBy, setSortBy, res
             </label>
             <select
               value={filters.maxTuition || ""}
-              onChange={(e) => setFilters({ ...filters, maxTuition: e.target.value ? parseInt(e.target.value) : null })}
+              onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setFilters({ ...filters, maxTuition: e.target.value ? parseInt(e.target.value) : null })}
               className="w-full text-sm font-body text-slate-600 bg-surface-50 border border-surface-200 rounded-lg px-3 py-2 outline-none focus:border-primary/30"
             >
               <option value="">Any budget</option>

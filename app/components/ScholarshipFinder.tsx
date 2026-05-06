@@ -1,3 +1,4 @@
+import { ProgramResult } from "../types";
 "use client";
 import { useState } from "react";
 import { findInstitution } from "../lib/data";
@@ -71,7 +72,8 @@ const PROVINCIAL_SCHOLARSHIPS = [
   { name: "Alberta Student Aid (Loans & Grants)", amount: "Varies", type: "Need", note: "Government student loans and grants for Alberta residents", url: "https://studentaid.alberta.ca/" },
 ];
 
-export default function ScholarshipFinder({ results }) {
+interface ScholarshipFinderProps { results: ProgramResult[] | null; }
+export default function ScholarshipFinder({ results }: ScholarshipFinderProps) {
   const [expanded, setExpanded] = useState(false);
 
   if (!results || results.length === 0) return null;
@@ -157,7 +159,7 @@ export default function ScholarshipFinder({ results }) {
   );
 }
 
-function ScholarshipRow({ scholarship }) {
+function ScholarshipRow({ scholarship }: { scholarship: any }) {
   return (
     <div className="flex items-start gap-3 px-4 py-3 border-b border-surface-100 dark:border-slate-700 last:border-b-0 hover:bg-surface-50 dark:hover:bg-slate-700/30 transition-colors">
       <div className={`mt-0.5 px-2 py-0.5 rounded text-[10px] font-body font-bold uppercase tracking-wider flex-shrink-0 ${

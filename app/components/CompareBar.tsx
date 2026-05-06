@@ -1,7 +1,9 @@
+import { ProgramResult } from "../types";
 "use client";
 import { findInstitution } from "../lib/data";
 
-export default function CompareBar({ compareList, onRemove, onCompare, onClear }) {
+interface CompareBarProps { compareList: ProgramResult[]; onRemove: (i: number) => void; onCompare: () => void; onClear: () => void; }
+export default function CompareBar({ compareList, onRemove, onCompare, onClear }: CompareBarProps) {
   if (compareList.length === 0) return null;
 
   return (

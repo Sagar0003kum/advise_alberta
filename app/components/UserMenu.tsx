@@ -2,7 +2,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "./AuthProvider";
 
-export default function UserMenu({ onOpenProfile }) {
+interface UserMenuProps { onOpenProfile?: () => void; }
+export default function UserMenu({ onOpenProfile }: UserMenuProps) {
   const { user, loading, loginWithGoogle, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);

@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export default function TypingPlaceholder({ texts }) {
+interface TypingPlaceholderProps { texts: string[]; }
+export default function TypingPlaceholder({ texts }: TypingPlaceholderProps) {
   const [textIndex, setTextIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);

@@ -1,3 +1,4 @@
+import { ProgramResult, CareerData } from "../types";
 "use client";
 import { useState } from "react";
 
@@ -20,7 +21,7 @@ const CAREER_DATA = {
   "default": { salary: "$45,000-$65,000", employment: "85%", growth: "↑ 5%", employers: ["Various Alberta employers"], titles: ["Multiple career paths"] },
 };
 
-function getCareerData(programName) {
+function getCareerData(programName: string | undefined): CareerData {
   const lower = (programName || "").toLowerCase();
   for (const [key, data] of Object.entries(CAREER_DATA)) {
     if (key !== "default" && lower.includes(key)) return data;
@@ -28,7 +29,8 @@ function getCareerData(programName) {
   return CAREER_DATA.default;
 }
 
-export default function CareerOutcome({ result, onClose }) {
+interface CareerOutcomeProps { result: ProgramResult; onClose: () => void; }
+export default function CareerOutcome({ result, onClose }: CareerOutcomeProps) {
   const career = getCareerData(result?.program_name);
   const tuitionNum = (() => {
     const match = (result?.tuition_domestic || "").replace(/,/g, "").match(/\$([\d.]+)/);

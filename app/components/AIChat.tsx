@@ -1,7 +1,9 @@
+import { ProgramResult, ChatMessage } from "../types";
 "use client";
 import { useState, useRef, useEffect } from "react";
 
-export default function AIChat({ results, originalQuery }) {
+interface AIChatProps { results: ProgramResult[] | null; originalQuery: string; }
+export default function AIChat({ results, originalQuery }: AIChatProps) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -181,8 +183,8 @@ export default function AIChat({ results, originalQuery }) {
                 ref={inputRef}
                 type="text"
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setInput(e.target.value)}
+                onKeyDown={(e: React.KeyboardEvent) => e.key === "Enter" && sendMessage()}
                 placeholder="Ask a question..."
                 className="flex-1 text-sm font-body text-slate-700 bg-white border border-surface-200 rounded-lg px-3 py-1.5 outline-none focus:border-primary/30"
                 disabled={loading}

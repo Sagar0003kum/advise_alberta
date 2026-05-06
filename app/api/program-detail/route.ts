@@ -93,7 +93,7 @@ async function fetchRichFromGemini(programName, institution) {
   }
 }
 
-export async function POST(request) {
+export async function POST(request: Request) {
   try {
     const { program_name, institution } = await request.json();
 

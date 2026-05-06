@@ -157,7 +157,8 @@ function AnimatedLogo() {
   );
 }
 
-export default function Navbar({ onOpenMatcher, onOpenProfile }) {
+interface NavbarProps { onOpenMatcher: () => void; onOpenProfile: () => void; }
+export default function Navbar({ onOpenMatcher, onOpenProfile }: NavbarProps) {
   return (
     <nav className="flex justify-between items-center py-3 sm:py-4 px-4 sm:px-6 bg-white dark:bg-slate-900 border-b border-surface-200 dark:border-slate-700 transition-colors">
       <div className="flex items-center gap-2.5">

@@ -56,7 +56,7 @@ function getCacheKey(query) {
 }
 
 // ── POST handler ────────────────────────────────────────────────────────
-export async function POST(request) {
+export async function POST(request: Request) {
   try {
     const { query } = await request.json();
 

@@ -25,7 +25,8 @@ const SCHOLARSHIPS_DB = [
   { name: "Healthcare Heroes Bursary", amount: "$2,000", match: (p) => p.interests?.includes("Healthcare"), reason: "Supporting future healthcare workers" },
 ];
 
-export default function StudentProfile({ onClose }) {
+interface StudentProfileProps { onClose: () => void; }
+export default function StudentProfile({ onClose }: StudentProfileProps) {
   const { user, loginWithGoogle } = useAuth();
   const [tab, setTab] = useState("profile"); // profile | scholarships
   const [profile, setProfile] = useState({

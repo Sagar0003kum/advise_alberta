@@ -1,3 +1,4 @@
+import { ProgramResult } from "../types";
 "use client";
 import { useState } from "react";
 
@@ -34,7 +35,8 @@ function getIntakeDeadlines(intake) {
   return deadlines.filter((d) => getDaysUntil(d.applyBy) > -30); // Show up to 30 days past
 }
 
-export default function DeadlineTracker({ result, onClose }) {
+interface DeadlineTrackerProps { result: ProgramResult; onClose: () => void; }
+export default function DeadlineTracker({ result, onClose }: DeadlineTrackerProps) {
   const deadlines = getIntakeDeadlines(result?.intake);
   const [showAll, setShowAll] = useState(false);
 

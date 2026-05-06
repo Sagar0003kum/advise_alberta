@@ -1,7 +1,9 @@
+import { ProgramResult } from "../types";
 "use client";
 import { useState } from "react";
 
-export default function ShareResults({ query, results }) {
+interface ShareResultsProps { query: string; results: ProgramResult[] | null; }
+export default function ShareResults({ query, results }: ShareResultsProps) {
   const [showPanel, setShowPanel] = useState(false);
   const [copied, setCopied] = useState(false);
 

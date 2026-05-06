@@ -1,3 +1,4 @@
+import { ProgramResult } from "../types";
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
@@ -45,7 +46,7 @@ const CARD_IMAGES = {
   default:     "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&q=75",
 };
 
-function getProgramImage(programName, set = "hero") {
+function getProgramImage(programName: string | undefined, set: string = "hero"): string {
   const images = set === "card" ? CARD_IMAGES : HERO_IMAGES;
   const lower = (programName || "").toLowerCase();
   for (const [key, url] of Object.entries(images)) {
@@ -55,7 +56,7 @@ function getProgramImage(programName, set = "hero") {
 }
 
 // ── Similar programs from verified DB ────────────────────────────────────────
-function getSimilarPrograms(currentName, currentInstitution, limit = 4) {
+function getSimilarPrograms(currentName: string | undefined, currentInstitution: string | undefined, limit: number = 4) {
   const stopWords = new Set(["of","in","and","the","a","for","to","bachelor","master","diploma","certificate","science","arts"]);
   const keywords = (currentName || "").toLowerCase().split(/\s+/).filter(w => w.length > 3 && !stopWords.has(w));
   if (!keywords.length) return [];
@@ -67,7 +68,7 @@ function getSimilarPrograms(currentName, currentInstitution, limit = 4) {
     .slice(0, limit);
 }
 
-async function fetchProgramDetail(programName, institution) {
+async function fetchProgramDetail(programName: string, institution: string) {
   const res = await fetch("/api/program-detail", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -190,7 +191,8 @@ function SimilarCard({ program, onSelect }) {
 }
 
 // ── Main export ───────────────────────────────────────────────────────────────
-export default function ProgramPage({ result, onBack }) {
+interface ProgramPageProps { result: ProgramResult; onBack: () => void; }
+export default function ProgramPage({ result, onBack }: ProgramPageProps) {
   const [detail, setDetail]   = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");

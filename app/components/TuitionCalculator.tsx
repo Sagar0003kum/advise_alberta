@@ -1,3 +1,4 @@
+import { ProgramResult } from "../types";
 "use client";
 import { useState } from "react";
 
@@ -18,7 +19,8 @@ function extractNumber(str) {
   return match ? parseFloat(match[1]) : 0;
 }
 
-export default function TuitionCalculator({ result, onClose }) {
+interface TuitionCalculatorProps { result: ProgramResult; onClose: () => void; }
+export default function TuitionCalculator({ result, onClose }: TuitionCalculatorProps) {
   const [status, setStatus] = useState("domestic");
   const [housing, setHousing] = useState("shared");
   const [city, setCity] = useState(() => {
@@ -87,7 +89,7 @@ export default function TuitionCalculator({ result, onClose }) {
 
             <div>
               <label className="text-[10px] font-body font-semibold uppercase tracking-widest text-slate-400 mb-1.5 block">Housing</label>
-              <select value={housing} onChange={(e) => setHousing(e.target.value)}
+              <select value={housing} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setHousing(e.target.value)}
                 className="w-full text-xs font-body text-slate-600 bg-surface-50 border border-surface-200 rounded-lg px-3 py-2 outline-none">
                 <option value="shared">Shared apartment</option>
                 <option value="solo">Solo apartment</option>
@@ -97,7 +99,7 @@ export default function TuitionCalculator({ result, onClose }) {
 
             <div>
               <label className="text-[10px] font-body font-semibold uppercase tracking-widest text-slate-400 mb-1.5 block">City</label>
-              <select value={city} onChange={(e) => setCity(e.target.value)}
+              <select value={city} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setCity(e.target.value)}
                 className="w-full text-xs font-body text-slate-600 bg-surface-50 border border-surface-200 rounded-lg px-3 py-2 outline-none">
                 {Object.keys(LIVING_COSTS).map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
@@ -141,7 +143,7 @@ export default function TuitionCalculator({ result, onClose }) {
   );
 }
 
-function CostRow({ label, amount, sub, highlight }) {
+function CostRow({ label, amount, sub, highlight }: { label: string; amount: number; sub?: string; highlight?: boolean }) {
   return (
     <div className="flex items-center justify-between px-4 py-2.5 border-b border-surface-100">
       <div>

@@ -1,7 +1,9 @@
+import { Institution } from "../types";
 "use client";
 import { useState } from "react";
 
-export default function InstitutionBadge({ inst, index }) {
+interface InstitutionBadgeProps { inst: Institution; index: number; }
+export default function InstitutionBadge({ inst, index }: InstitutionBadgeProps) {
   const [hovered, setHovered] = useState(false);
 
   return (

@@ -1,10 +1,12 @@
+import { ProgramResult } from "../types";
 "use client";
 import { useState } from "react";
 import { useAuth } from "./AuthProvider";
 import { db } from "../lib/firebase";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
-export default function EmailAlerts({ query, results }) {
+interface EmailAlertsProps { query: string; results: ProgramResult[] | null; }
+export default function EmailAlerts({ query, results }: EmailAlertsProps) {
   const { user, loginWithGoogle } = useAuth();
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);

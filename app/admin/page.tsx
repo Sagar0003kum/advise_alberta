@@ -5,7 +5,7 @@ import { db } from "../lib/firebase";
 import { collection, getDocs, query, orderBy, limit, where } from "firebase/firestore";
 import DarkModeToggle from "../components/DarkModeToggle";
 
-function StatCard({ label, value, sub, icon, color }) {
+function StatCard({ label, value, sub, icon, color }: { label: string; value: string | number; sub?: string; icon: React.ReactNode; color: string }) {
   return (
     <div className="bg-white dark:bg-slate-800 border border-surface-200 dark:border-slate-700 rounded-xl p-4 sm:p-5">
       <div className="flex items-start justify-between mb-2">
@@ -20,7 +20,7 @@ function StatCard({ label, value, sub, icon, color }) {
   );
 }
 
-function TableRow({ cells, header }) {
+function TableRow({ cells, header }: { cells: any[]; header?: boolean }) {
   return (
     <tr className={header ? "bg-surface-50 dark:bg-slate-700/50" : "hover:bg-surface-50 dark:hover:bg-slate-700/30 transition-colors"}>
       {cells.map((cell, i) => {

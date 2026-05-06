@@ -2,7 +2,7 @@ import { initializeApp, getApps } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// ══════════════════════════════════════════════════════════════ff
+// ══════════════════════════════════════════════════════════════
 // PASTE YOUR FIREBASE CONFIG BELOW
 // Get it from: Firebase Console → Project Settings → Your apps
 // ══════════════════════════════════════════════════════════════

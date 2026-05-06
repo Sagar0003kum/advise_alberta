@@ -5,7 +5,8 @@ const INTEREST_TAGS = ["Technology","Healthcare","Business","Engineering","Arts 
 const CITIES = ["Calgary","Edmonton","Lethbridge","Red Deer","Medicine Hat","Grande Prairie","Any city"];
 const BUDGETS = ["Under $5,000/year","$5,000-$10,000/year","$10,000-$20,000/year","$20,000+/year","Flexible"];
 
-export default function ProgramMatcher({ onClose }) {
+interface ProgramMatcherProps { onClose: () => void; }
+export default function ProgramMatcher({ onClose }: ProgramMatcherProps) {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({ grades: "", interests: [], city: "", budget: "", credential: "", description: "" });
   const [results, setResults] = useState(null);

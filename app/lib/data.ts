@@ -1,4 +1,6 @@
-export const INSTITUTIONS = [
+import { Institution } from "../types";
+
+export const INSTITUTIONS: Institution[] = [
   { name: "SAIT", fullName: "Southern Alberta Institute of Technology", city: "Calgary", type: "Polytechnic", color: "#D4342A", website: "https://www.sait.ca" },
   { name: "NAIT", fullName: "Northern Alberta Institute of Technology", city: "Edmonton", type: "Polytechnic", color: "#003B71", website: "https://www.nait.ca" },
   { name: "U of C", fullName: "University of Calgary", city: "Calgary", type: "University", color: "#CF0722", website: "https://ucalgary.ca" },
@@ -27,7 +29,7 @@ export const INSTITUTIONS = [
   { name: "Banff Centre", fullName: "Banff Centre for Arts and Creativity", city: "Banff", type: "College", color: "#E4572E", website: "https://www.banffcentre.ca" },
 ];
 
-export const SUGGESTED_QUERIES = [
+export const SUGGESTED_QUERIES: string[] = [
   "Software development programs in Calgary",
   "Affordable nursing programs in Alberta",
   "Business diploma under $10,000",
@@ -38,8 +40,8 @@ export const SUGGESTED_QUERIES = [
   "Early childhood education diploma",
 ];
 
-export function findInstitution(name) {
-  if (!name) return null;
+export function findInstitution(name: string): Institution | undefined {
+  if (!name) return undefined;
   const lower = name.toLowerCase();
   return INSTITUTIONS.find(
     (i) =>

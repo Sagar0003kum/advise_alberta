@@ -1,8 +1,10 @@
+import { ProgramResult } from "../types";
 "use client";
 import { useState, useEffect } from "react";
 import { findInstitution } from "../lib/data";
 
-export default function ResultCard({ result, index, onViewDetail, isCompared, onToggleCompare, compareCount, onCalculator, onDeadline, onCareer }) {
+interface ResultCardProps { result: ProgramResult; index: number; onViewDetail: () => void; isCompared: boolean; onToggleCompare: () => void; compareCount: number; onCalculator: () => void; onDeadline: () => void; onCareer: () => void; }
+export default function ResultCard({ result, index, onViewDetail, isCompared, onToggleCompare, compareCount, onCalculator, onDeadline, onCareer }: ResultCardProps) {
   const [hovered, setHovered] = useState(false);
   const inst = findInstitution(result.institution);
   const accent = inst?.color || "#0D9488";
@@ -261,7 +263,7 @@ export default function ResultCard({ result, index, onViewDetail, isCompared, on
   );
 }
 
-function buildGoogleSearchUrl(programName, institution, website) {
+function buildGoogleSearchUrl(programName: string, institution: string, website?: string): string {
   let domain = "";
   if (website) {
     try {
@@ -277,7 +279,7 @@ function buildGoogleSearchUrl(programName, institution, website) {
   return `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
 }
 
-function InfoBox({ label, value, accent }) {
+function InfoBox({ label, value, accent }: { label: string; value: string; accent: string }) {
   return (
     <div className="bg-surface-50 border border-surface-200 rounded-lg px-3.5 py-2.5 sm:px-4 sm:py-3">
       <div className="text-[10px] font-body font-semibold uppercase tracking-widest text-slate-400 mb-0.5">

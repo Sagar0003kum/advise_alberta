@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 const validationCache = new Map();
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
-export async function POST(request) {
+export async function POST(request: Request) {
   try {
     const { url } = await request.json();
 
